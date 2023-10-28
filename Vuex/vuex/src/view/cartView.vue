@@ -1,5 +1,12 @@
 <template>
   <div>
+    <v-card>
+      <v-app-bar color="orange" light class="text-align-center mb-5"
+        ><v-toolbar-title light class="d-flex"><v-img width="80" src="/static/shopping.png" class="mr-2"></v-img> 
+
+ </v-toolbar-title>
+      </v-app-bar>
+    </v-card>
     <v-simple-table width="1000" class="mx-4">
       <template v-slot:default>
         <thead>
@@ -31,11 +38,19 @@
                   :items="quantities"
                   filled
                   dense
+                  :disabled="item.quantity > products.stock"
                   v-if="!item.showInput"
-                  @change="changeQuantity(item)"
+                  @change="changeQuantity(item, index)"
                 ></v-select>
                 <div v-else class="d-flex flex-row">
-                  <v-btn class="mx-2" fab dark x-small color="red">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    x-small
+                    color="red"
+                    :disabled="item.quantity == 1"
+                  >
                     <v-icon dark @click="updateQuantity(item, -1)">
                       mdi-minus
                     </v-icon>
@@ -47,10 +62,11 @@
                     label="Enter Quantity"
                     required
                     v-on:blur="checkEmpty(item)"
-                    @change="changeQuantity(item)"
+                    @change="changeQuantity(item, index)"
+                    @wheel="$event.target.blur()"
                   ></v-text-field>
 
-                  <v-btn class="mx-2" fab dark x-small color="orange">
+                  <v-btn class="mx-2" fab dark x-small color="green">
                     <v-icon dark @click="updateQuantity(item, 1)">
                       mdi-plus
                     </v-icon>
@@ -59,13 +75,20 @@
               </v-col>
             </td>
             <td>
-              <v-btn small depressed color="primary" class="mr-5" rounded>
+              <v-btn
+                small
+                depressed
+                color="primary"
+                class="mr-5"
+                rounded
+                @click="viewItem(item)"
+              >
                 View
               </v-btn>
               <v-btn
                 small
                 depressed
-                color="green"
+                color="orange"
                 rounded
                 @click="removeItem(item)"
               >
@@ -117,24 +140,30 @@
         </v-card-title>
       </v-card>
     </div>
-    <cartViewModal />
+    <cartViewModal
+      v-if="viewModal"
+      :item="selectedItem"
+      @closed="viewModal = false"
+    ></cartViewModal>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
+
 export default {
   name: "cartVue",
   data() {
     return {
       quantities: [1, 2, 3, "more"],
-      defaultval: 1,
-      showInput: false,
+      selectedItem: [],
+      viewModal: false,
+      //cartItems: this.$store.state.cartItems
     };
   },
   computed: {
+    ...mapState({ products: "allProducts", cartItems: "cartItems" }),
     ...mapGetters({
-      cartItems: "GET_ALL_CART_ITEMS",
       amount: "GET_TOTAL_AMOUNT",
     }),
   },
@@ -196,15 +225,25 @@ export default {
               })
               .then(() => {
                 this.emptyTheCart();
+                // this.cartItems = [];
               });
           }
         });
     },
-    changeQuantity(item) {
-      console.log(item.quantity);
+    changeQuantity(item, index) {
       if (item.quantity == "more") {
         item.showInput = true;
         item.quantity == 1;
+      } else {
+        this.cartItems[index].quantity = item.quantity;
+      }
+      if (item.quantity > item.stock) {
+        this.$swal({
+          icon: "error",
+          title: "Quantity going out of Stock !",
+        }).then(() => {
+          item.quantity = 1;
+        });
       }
     },
     updateQuantity(item, value) {
@@ -214,11 +253,23 @@ export default {
       } else {
         this.increment(item);
       }
+      if (item.quantity > item.stock) {
+        this.$swal({
+          icon: "error",
+          title: "Quantity going out of Stock !",
+        }).then(() => {
+          item.quantity = 1;
+        });
+      }
     },
     checkEmpty(item) {
-      if (item.quantity == "") {
+      if (item.quantity == "" || item.quantity == 0) {
         item.quantity = 1;
       }
+    },
+    viewItem(item) {
+      this.selectedItem = item;
+      this.viewModal = true;
     },
   },
 };

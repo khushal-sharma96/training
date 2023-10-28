@@ -6,12 +6,26 @@ const vuexLocalStorage = new VuexPersist({
   key: 'vuex', // The key to store the state on in the storage provider.
   storage: window.localStorage,
 })
-
-export default new Vuex.Store({
-  state: {
+let products = [
+  { id: 1, name: "Iphone 14", price: 120000, stock: 20 },
+  { id: 2, name: "Hp Laptop", price: 60000, stock: 1 },
+  { id: 3, name: "Sony Headphones", price: 3000, stock: 0 },
+  { id: 4, name: "Sony LED Tv", price: 32000, stock: 8 },
+  { id: 5, name: "CP Plus dome Camera", price: 3000, stock: 2 },
+  { id: 6, name: "Samsung Refrigerator", price: 30000, stock: 15 },
+  { id: 7, name: "Home Theatre", price: 5000, stock: 20 },
+  { id: 8, name: "Samsung Smart Watch", price: 10000, stock: 3 },
+];
+const defaultState = () => {
+  return {
     count: 0,
     cartItems: [],
-  },
+    allProducts: products,
+  }
+}
+
+export default new Vuex.Store({
+  state: defaultState(),
   getters: {
     GET_COUNT(state) {
       return state.count;
@@ -28,6 +42,9 @@ export default new Vuex.Store({
         amount += (item.price * item.quantity)
       }
       return amount;
+    },
+    GET_ALL_PRODUCTS(state) {
+      return state.allProducts;
     }
   },
   mutations: {
@@ -55,7 +72,8 @@ export default new Vuex.Store({
       }
       if (itemIndex === -1) {
         payload.quantity = 1;
-        state.cartItems.push(payload);
+        // state.cartItems.push(payload);
+        // state.cartItems[index].cartId.push(payload.userCartId)
       } else {
         state.cartItems[itemIndex].quantity += 1;
       }
@@ -66,7 +84,9 @@ export default new Vuex.Store({
       state.cartItems.splice(index, 1);
     },
     EMPTY_CART(state) {
-      state.cartItems = [];
+      // state.cartItems = [];
+      // Object.assign(state.cartItems, []);
+      Object.assign(state, defaultState());
     }
   },
   actions: {
