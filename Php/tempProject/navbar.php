@@ -14,11 +14,9 @@
         }
 
         .highlight {
-            color: green;
-            background-color: red;
-            border-radius: 20px;
-            width: 80px;
-            justify-content: center;
+            color: goldenrod;
+            font-weight: bold;
+            scale: 1.1;
         }
 
         .items {
@@ -41,9 +39,14 @@
             align-items: center;
         }
 
-        a {
-            color: white;
-            text-decoration: none;
+        #navbarList {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        #navbarList li {
+            cursor: pointer;
         }
     </style>
     <script script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous">
@@ -53,25 +56,29 @@
 <body>
     <div class="navbar">
         <div class="items">
-            <div class="span"><a href="./index.php">Home</a></div>
+            <!-- <div class="span"><a href="./index.php">Home</a></div>
             <div class="span"><a href="./contact.php">About</a></div>
-            <div class="span"><a href="./about.php">Contact</a></div>
-            <!-- <span></span>
-            <span></span>
-            <span></span> -->
+            <div class="span"><a href="./about.php">Contact</a></div> -->
+            <ul type=none id='navbarList'>
+                <li class="highlight">Home</li>
+                <li>Contact</li>
+                <li>About</li>
+            </ul>
         </div>
     </div>
+    <iframe src="http://localhost/Training/PHP/tempProject/home.php" allowfullscreen='true' frameborder="0" scrolling="no" height="100 vh" width="100%" id='myFrame'></iframe>
     <script>
-        let fileName = "<?php
-                        $actual_link = basename("$_SERVER[REQUEST_URI]");
-                        echo $actual_link;
-                        ?>";
-        let spans = $('span');
-        $('a').each(function() {
-            if (($(this).attr("href")).includes(fileName))
-                $(this).parent().addClass('highlight');
+        let fileName = window.location.href;
+        $('#navbarList li').click(function() {
+            action = ($(this).text()).toLowerCase();
+            $('#myFrame').attr('src', `http://localhost/Training/PHP/tempProject/${action}.php`);
+            $('.highlight').removeClass('highlight');
+            $('#navbarList li').each(function() {
+                if ($(this).text().toLowerCase() == action) {
+                    $(this).addClass('highlight');
+                }
+            })
         })
-        //console.log(filename('http://example.com/index.html?lang=ja'));
     </script>
 </body>
 

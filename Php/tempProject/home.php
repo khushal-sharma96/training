@@ -1,7 +1,3 @@
-<?php
-$actual_link = basename("$_SERVER[REQUEST_URI]");
-echo $actual_link;
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -36,7 +32,7 @@ echo $actual_link;
 
 <body>
     <?php
-    include('./navbar.php')
+    // include('./navbar.php')
     ?>
     <div class="main">
         <div class="imageContaner">
