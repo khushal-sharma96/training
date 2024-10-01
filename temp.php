@@ -121,4 +121,8 @@ CLIENT_SECRET= 8pkqa7UPQDgrgYfr6sL5YXQpMDTfRjD4F4bIygi9
 
 ADMIN_ID='1'
 
+/*
+    Uncaught Exception:
+Error: ENOENT: no such file or directory, rename '/Users/sunil/Library/Application Support/bee-work-tracker/db/settings.db~' -> '/Users/sunil/Library/Application Support/bee-work-tracker/db/settings.db'
+
 ?>
